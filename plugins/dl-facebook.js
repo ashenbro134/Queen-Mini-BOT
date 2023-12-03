@@ -1,0 +1,40 @@
+import fg from 'api-dylux';
+
+const handler = async (m, { conn, args, usedPrefix, command }) => {
+  if (!args[0]) {
+    throw `✳️ Please send the link of a Facebook video\n\n📌 EXAMPLE :\n*${usedPrefix + command}* https://www.facebook.com/Ankursajiyaan/videos/981948876160874/?mibextid=rS40aB7S9Ucbxw6v`;
+  }
+
+  const urlRegex = /^(?:https?:\/\/)?(?:www\.)?(?:facebook\.com|fb\.watch)\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i;
+  if (!urlRegex.test(args[0])) {
+    throw '⚠️ PLEASE GIVE A VALID URL.';
+  }
+
+  m.react(rwait);
+
+  try {
+    const result = await fg.fbdl(args[0]);
+    const tex = `
+💝💝💝𝗔𝗟𝗘𝗫𝗔-𝗙𝗕-𝗗𝗟💝💝💝
+↳ *VIDEO TITLE:* ${result.title}
+💝 ────── {⋆♬⋆} ────── 💝`;
+
+    const response = await fetch(result.videoUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const videoBuffer = Buffer.from(arrayBuffer);
+
+    conn.sendFile(m.chat, videoBuffer, 'fb.mp4', tex, m);
+    m.react(done);
+  } catch (error) {
+    console.log(error);
+    m.reply('⚠️ ඉල්ලීම සැකසීමේදී දෝෂයක් ඇති විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.');
+  }
+};
+
+handler.help = ['facebook <url>'];
+handler.tags = ['downloader'];
+handler.command = /^((facebook|fb)(downloder|dl)?)$/i;
+handler.diamond = true;
+
+export default handler;
+
