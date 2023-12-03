@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: ALEXA-BOT
+    env: docker
+    region: Frankfurt
+    plan: free
